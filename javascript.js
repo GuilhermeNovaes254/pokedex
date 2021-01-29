@@ -1,41 +1,87 @@
+const types = [
+    "fire",
+    "grass",
+    "eletric",
+    "water",
+    "ground",
+    "rock",
+    "fairy",
+    "poison",
+    "bug",
+    "dragon",
+    "psychic",
+    "flying",
+    "fighting",
+    "normal"
+];
 
-const card = document.querySelector(".card");
+const POKEMON_COUNT = 151;
+
+const cardHTML = 
+    `
+    <div class="card" id="card-{id}">
+        <div class="title">
+            <h2>{name}</h2>
+            <small># {id}</small>
+        </div>
+
+        <div class="img bg-{type}">
+            <img src="https://pokeres.bastionbot.org/images/pokemon/{id}.png" />
+        </div>
+        <div class="type {type}">
+            <p>{type}</p>
+        </div>
+        <button class="favorite" data-id="{id}">
+            <div class="heart"></div>
+        </button>
+    </div>
+    `
+
 const cards = document.querySelector(".cards");
 
-for(let i=0; i < 15; i++ ){
+const getType = (data) => {
 
-    const clone = card.cloneNode(true);
-    cards.appendChild(clone);
-}
+    const apiTypes = data.map(type => type.type.name);
+    const type = types.find(type => apiTypes.indexOf(type)> -1);
 
-// const colors = {
-//     fire: "#e4604d",
-//     grass: "#9DD465",
-//     eletric: "#F9E45F",
-//     water: "#6A83D6",
-//     ground: "#E4C967",
-//     rock: "#CABB7B",
-//     fairy: "#EEB2FA",
-//     poison: "#9F619D",
-//     bug: "#C5CF4A",
-//     dragon: "#857AF7",
-//     psychic: "#E56EAF",
-//     flying: "#80A4F9",
-//     fighting: "#9B5A48",
-//     normal: "#BAB8AB"   
-// };
+    return type;
+};
 
-// const style = [];
-// for( let key in colors ){
-//     const css = `
-//     .bg-${key}{
-//         background: linear-gradient( to top right, ${colors[key]}, #3d3d3d 25%);
-//     }
-//     .${key}{
-//         background-color: ${colors[key]};
-//     }
-//     `;
-//     style.push(css);
-// }
+const fetchPokemon = async (number) => {
 
-// console.log(style)
+    if(number === undefined)return;
+    const url = `https://pokeapi.co/api/v2/pokemon/${number}`;
+
+    const response = await fetch(url).then((response) => response.json());
+    const {id, name, types} = response;
+    const type = getType(types);
+
+    return {id, name, type}
+};
+
+const replacer = (text, source, destination) => {
+
+    const regex = new RegExp(source, "gi");
+    return text.replace(regex, destination);
+};
+
+
+const createPokemonCard = (pokemon) => {
+
+    const {id, name, type} = pokemon;
+    let newCard = replacer(cardHTML, `\{id\}`,id);
+    newCard =  replacer(newCard, `\{name\}`, name);
+    newCard = replacer(newCard, `\{type\}`, type);
+    cards.innerHTML += newCard;
+    
+};
+
+
+const fetchPokemons = async () => {
+    for(let i = 1; i <= POKEMON_COUNT; i++) {
+        const pokemon = await fetchPokemon(i);
+        createPokemonCard(pokemon);
+    }
+};
+
+fetchPokemons()
