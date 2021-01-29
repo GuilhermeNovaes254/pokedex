@@ -28,7 +28,7 @@ html, body{
 .bg-eletric{
     background: linear-gradient( to top right, #F9E45F, var(--card-bg) 25%);
 }
-.eletric{
+.electric{
     background-color: #F9E45F;
 }
 .bg-water{

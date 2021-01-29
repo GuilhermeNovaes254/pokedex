@@ -1,7 +1,7 @@
 const types = [
     "fire",
     "grass",
-    "eletric",
+    "electric",
     "water",
     "ground",
     "rock",
@@ -73,7 +73,7 @@ const createPokemonCard = (pokemon) => {
     newCard =  replacer(newCard, `\{name\}`, name);
     newCard = replacer(newCard, `\{type\}`, type);
     cards.innerHTML += newCard;
-    
+
 };
 
 
